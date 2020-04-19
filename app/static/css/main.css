@@ -1,0 +1,14 @@
+.panel-margin {
+    margin: 30px;
+}
+
+.panel-frames {
+    border-color: darkgrey;
+    border-style: outset;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.panel-xs {
+    width: 50%;
+    margin: auto;
+}

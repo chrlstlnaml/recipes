@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+    <link href="{{ url_for('static', filename='build/summernote/dist/summernote.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Добавление рецепта{% endblock %}
+
+{% block body %}
+    <div class="panel panel-frames">
+        <div class="panel-margin">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                    <h2>Добавление рецепта</h2>
+                </div>
+            </div>
+
+            <form id="saveRecipeForm">
+            {% if data.recipe %} <input type="hidden" id="recipes_id" name="recipes_id" value="{{ data.recipe[0].id }}"> {% endif %}
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="alert alert-danger col-md-12 col-sm-12 col-xs-12" role="alert" style="display: none;"
+                         id="saveRecipeMessage">
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <label for="name" class="col-xs-12 col-md-12 col-lg-12">
+                                Название блюда <span class="required">*</span>
+                            </label>
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+                                <input type="text" class="form-control" id="name" name="name" required
+                                       minlength="3" {% if data.recipe %}value="{{ data.recipe[0].name }}"{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <label for="photo" class="col-xs-12 col-md-12 col-lg-12">
+                                Фотография
+                            </label>
+                            {% if not data.recipe or not data.recipe[0].file_name %}
+                                <div class="col-xs-12 col-md-12 col-lg-12">
+                                    <input type="file" id="photo" name="photo" style="width: 100%;"
+                                           accept="{% for type in data.accept %}.{{ type }}, {% endfor %}">
+                                </div>
+                            {% else %}
+                                <div class="col-xs-12 col-md-2 col-lg-2">
+                                    <button type="button" class="btn btn-danger"
+                                            data-target="#mDeletePhoto" data-toggle="modal">Удалить</button>
+                                </div>
+                                <div class="col-xs-12 col-md-10 col-lg-10">
+                                    <input type="text" readonly class="form-control"
+                                           value="{{ data.recipe[0].file_name }}.{{ data.recipe[0].type_file }}">
+                                    <input type="hidden" id="file" value="{{ data.recipe[0].file_id }}.{{ data.recipe[0].type_file }}">
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-xs-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <label for="complexity" class="col-xs-12 col-md-12 col-lg-12">
+                                Сложность <span class="required">*</span>
+                            </label>
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+                                <select id="complexity" class="selectpicker-ingredient form-control" required
+                                        data-live-search="true" name="complexity">
+                                    {% for complexity in data.complexity %}
+                                        <option value="{{ complexity.id }}"
+                                        {% if data.recipe and data.recipe[0].complexity == complexity.id %}
+                                                selected{% endif %}>{{ complexity.ru_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xs-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <label for="category" class="col-xs-12 col-md-12 col-lg-12">
+                                Категории <span class="required">*</span>
+                            </label>
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+                                <select id="category" class="selectpicker-category form-control" required
+                                        data-live-search="true" multiple>
+                                    {% for category in data.category %}
+                                        <option value="{{ category.id }}"
+                                        {% if data.recipe %} {% for category_ in data.recipe_categories %}
+                                        {% if category_.category == category.id %}selected{% endif %}{% endfor %}
+                                                {% endif %}>{{ category.ru_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+
+                    <div class="col-xs-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <label for="number_of_servings" class="col-xs-12 col-md-12 col-lg-12">
+                                Количество персон <span class="required">*</span>
+                            </label>
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+                                <input type="number" class="form-control" id="number_of_servings" required
+                                       name="number_of_servings" min="1"
+                                       {% if data.recipe %}value="{{ data.recipe[0].number_of_servings }}"{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <label for="cooking_time" class="col-xs-12 col-md-12 col-lg-12">
+                                Время приготовления <span class="required">*</span>
+                            </label>
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+                                <input type="time" class="form-control" id="cooking_time" name="cooking_time" required
+                                {% if data.recipe %}value="{{ data.recipe[0].cooking_time.strftime('%H:%M') }}"{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <label for="ingredients" class="col-xs-12 col-md-12 col-lg-12">
+                        Ингредиенты <span class="required">*</span>
+                    </label>
+                    <div class="col-xs-12 col-md-12 col-lg-12" id="ingredientDiv">
+                        {% if not data.recipe %}
+                        {% include 'recipes/ingredient.html' %}
+                        {% else %}
+                            {% for recipe_ingredient in data.recipe_ingredients %}
+                                <span style="display: none;">{{ loop.index }}</span>
+                                {% include 'recipes/ingredient.html' %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 10px;">
+                    <label class="control-label col-md-12 col-sm-12 col-xs-12">Описание <span class="required">*</span>
+                    </label>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <textarea required id="description" name="description"
+                        >{% if data.recipe %}{{ data.recipe[0].description }}{% endif %}</textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-lg-12" style="margin-top: 10px;">
+                        <button class="btn btn-success" type="button" id="saveRecipeBtn" onClick="saveRecipe()">
+                            Сохранить
+                        </button>
+                        <button class="btn btn-success" data-target="#mNewIngredient" data-toggle="modal"
+                                type="button">
+                            Добавить ингредиент
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal" id="mDeletePhoto" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Вы уверены, что хотите удалить фото?</h4>
+                    <button type="button" class="close delete-photo-btn" data-dismiss="modal"
+                            aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>
+                        <b>ПРЕДУПРЕЖДЕНИЕ:</b> страница будет перезагружена!
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onClick="deletePhoto()"
+                            class="btn btn-sm btn-success delete-photo-btn">Удалить
+                    </button>
+                    <button type="button" data-dismiss="modal"
+                            class="btn btn-sm btn-danger delete-photo-btn">Отмена
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="mNewIngredient" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Новый ингредиент</h4>
+                    <button type="button" class="close new-ingredient-btn" data-dismiss="modal"
+                            aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="alert alert-danger col-md-12 col-sm-12 col-xs-12" role="alert"
+                             style="display: none;"
+                             id="newIngredientMessage">
+                        </div>
+
+                        <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                            <form class="form-horizontal form-label-left" id="newIngredientForm">
+                                <label for="ingredient_name">Наименование <span class="required">*</span></label>
+                                <input id="ingredient_name" class="form-control" name="ingredient_name"
+                                       required type="text">
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onClick="saveNewIngredient()"
+                            class="btn btn-sm btn-success new-ingredient-btn">Сохранить
+                    </button>
+                    <button type="button" data-dismiss="modal"
+                            class="btn btn-sm btn-danger new-ingredient-btn">Отмена
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='build/summernote/dist/summernote.js') }}" rel="stylesheet"></script>
+    <script>
+        var ingredientIndex = {{ index|int }};
+        var fileSize = {{ data.max_file_size|int }};
+    </script>
+    <script src="{{ url_for('static', filename='js/recipes/recipe.js') }}"></script>
+{% endblock %}

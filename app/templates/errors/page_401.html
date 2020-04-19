@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Необходимо авторизоваться{% endblock %}
+
+{% block body %}
+    <div class="panel panel-frames">
+        <div class="row panel-margin">
+            <div class="col-xs-12 col-md-12 col-lg-12 " style="text-align: center">
+                <h1>401</h1>
+                <h3>К этой странице имеют доступ только зарегистрированные пользователи!</h3>
+                <h6>
+                    <a href="/user/login">Войдите в свой аккаунт</a>
+                    или
+                    <a href="/user/registration">Зарегистрируйтесь</a></h6>
+            </div>
+        </div>
+    </div>
+{% endblock %}

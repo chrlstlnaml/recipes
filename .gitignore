@@ -1,0 +1,13 @@
+# byte-compiled
+__pycache__/
+*.py[cod]
+
+# pycharm
+.idea/
+.idea/*
+
+# database & logs
+*.log
+
+# venv
+venv

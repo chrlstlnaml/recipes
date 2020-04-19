@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="panel panel-frames">
+        <div class="panel-margin">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                    {% if not data.recipe[0].file_name %}
+                        <img src="{{ url_for('static', filename='images/eda.jpg') }}" alt="фото" width="300"
+                             height="300">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/recipe_img/{}/{}.{}'.format(data.recipe[0].user, data.recipe[0].file_name, data.recipe[0].type_file) ) }}"
+                             alt="фото" width="300" height="300">
+                    {% endif %}
+                </div>
+                <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                    <b>Время готовки:</b> {{ data.recipe[0].cooking_time }}
+                </div>
+                <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                    <b>Сложность:</b> {{ data.recipe[0].complexity }}
+                </div>
+                <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                    <b>Количество порций:</b> {{ data.recipe[0].number_of_servings }}
+                </div>
+                <div class="col-xs-12 col-md-12 col-lg-12" style=" margin-bottom: 10px;">
+                    <h4>Описание:</h4>
+                </div>
+                <div class="col-xs-12 col-md-12 col-lg-12" style=" margin-bottom: 10px;">
+                    {{ data.recipe[0].description|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

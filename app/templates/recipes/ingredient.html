@@ -1,0 +1,45 @@
+<div class="row" style="margin-bottom: 10px;"
+     id="divIngredients-{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}">
+    <div class="col-xs-12 col-md-6 col-lg-6">
+        <select id="ingredients-{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}"
+                class="selectpicker-ingredient form-control" required
+                data-live-search="true"
+                name="ingredients-{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}">
+            {% for ingredient in data.ingredients %}
+                <option value="{{ ingredient.id }}"
+                {% if recipe_ingredient and recipe_ingredient.ingredients == ingredient.id %}selected{% endif %}
+                >{{ ingredient.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-xs-12 col-md-3 col-lg-3">
+        <input type="number" class="form-control" step="0.1" required
+               id="number-{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}"
+               name="number-{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}"
+        {% if recipe_ingredient %}value="{{ recipe_ingredient.number }}"{% endif %}>
+    </div>
+    <div class="col-xs-12 col-md-2 col-lg-2">
+        <select id="measure-{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}"
+                class="selectpicker-measure form-control" required
+                data-live-search="true"
+                name="measure-{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}">
+            {% for measure in data.measure %}
+                <option value="{{ measure.id }}"
+                {% if recipe_ingredient and recipe_ingredient.measure == measure.id %}selected{% endif %}>{{ measure.ru_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-xs-12 col-md-1 col-lg-1">
+        {% if (not recipe_ingredient and index == 1) or (recipe_ingredient and loop.index == 1) %}
+            <button type="button" class="btn btn-primary" onClick="addIngredient()">
+                <span class="fa fa-plus"></span>
+            </button>
+        {% else %}
+            <button type="button" class="btn btn-primary"
+                    onClick="delIngredient('{% if recipe_ingredient %}{{ loop.index }}{% else %}{{ index }}{% endif %}')">
+                <span class="fa fa-minus"></span>
+            </button>
+        {% endif %}
+    </div>
+</div>

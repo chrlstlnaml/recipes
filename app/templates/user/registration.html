@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Войти{% endblock %}
+
+{% block body %}
+<div class="panel panel-frames panel-xs">
+    <div class="panel-margin" style="text-align: center;">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                <h2>Вход</h2>
+            </div>
+        </div>
+
+        <form id="signUpForm">
+
+            <div class="" role="alert" style="display: none;" id="signUpMessage">
+            </div>
+
+            <div class="row" style="margin-bottom: 10px;">
+                <label for="email" class="col-xs-12 col-md-2 col-lg-2">Почта <span class="required">*</span></label>
+                <div class="col-xs-12 col-md-10 col-lg-10">
+                    <input type="email" id="email" name="email" required="required" class="form-control"
+                    onChange="fillInLogin(this.value)">
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom: 10px;">
+                <label for="login" class="col-xs-12 col-md-2 col-lg-2">Логин <span class="required">*</span></label>
+                <div class="col-xs-12 col-md-10 col-lg-10">
+                    <input type="text" id="login" name="login" required="required" class="form-control"
+                    minlength="4">
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom: 10px;">
+                <label for="password" class="col-xs-12 col-md-2 col-lg-2">Пароль <span class="required">*</span></label>
+                <div class="col-xs-12 col-md-10 col-lg-10">
+                    <input type="password" id="password" name="password" required="required" class="form-control"
+                    minlength="6" oninput="checkPassword()">
+                </div>
+            </div>
+
+            <div class="row">
+                <label for="password2" class="col-xs-12 col-md-2 col-lg-2">Повторите пароль <span class="required">*</span></label>
+                <div class="col-xs-12 col-md-10 col-lg-10">
+                    <input type="password" id="password2" required="required" class="form-control" minlength="6"
+                    oninput="checkPassword()">
+                </div>
+
+                <div class="col-xs-12 col-md-12 col-lg-12" style="margin-top: 10px;">
+                    <button class="btn btn-success" type="button" id="signUpBtn" onClick="signUp()">Зарегистрироваться</button>
+                </div>
+
+                <div class="col-xs-12 col-md-12 col-lg-12" style="margin-top: 10px;">
+                    У меня уже есть аккаунт! <a href="../user/login">Войти</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='js/user/registration.js') }}"></script>
+{% endblock %}

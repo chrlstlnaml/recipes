@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск рецептов{% endblock %}
+
+{% block body %}
+    <div class="panel panel-frames">
+        <div class="panel-margin">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                    <h2>Поиск рецепта</h2>
+                </div>
+            </div>
+
+            <form id="searchRecipesForm">
+                <div class="row">
+                    <label for="ingredients" class="col-xs-12 col-md-2 col-lg-2">Ингредиенты</label>
+                    <div class="col-xs-12 col-md-10 col-lg-10">
+                        <select id="ingredients" class="selectpicker form-control" data-live-search="true" multiple>
+                            {% for ingredient in data.ingredients %}
+                                <option value="{{ ingredient.id }}">{{ ingredient.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-xs-12 col-md-12 col-lg-12" style="margin-top: 10px;">
+                        <button class="btn btn-success" type="button" id="searchRecipesBtn" onClick="searchRecipes()">
+                            Искать
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% for recipe in data.recipes %}
+        <div class="panel panel-frames">
+            <div class="panel-margin">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                        <h2><a href="../recipes/show_recipe?id={{ recipe.id }}">{{ recipe.name }}</a></h2>
+                    </div>
+                    <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                        {% if not recipe.file_name %}
+                            <img src="{{ url_for('static', filename='images/eda.jpg') }}" alt="фото" width="150"
+                                 height="150">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/recipe_img/{}/{}.{}'.format(recipe.user, recipe.file_name, recipe.type_file) ) }}"
+                                 alt="фото" width="150" height="150">
+
+                        {% endif %}
+                    </div>
+                    <div class="col-xs-12 col-md-4 col-lg-4" style="text-align: center; margin-bottom: 10px;">
+                        <b>Время готовки:</b> {{ recipe.cooking_time }}
+                    </div>
+                    <div class="col-xs-12 col-md-4 col-lg-4" style="text-align: center; margin-bottom: 10px;">
+                        <b>Сложность:</b> {{ recipe.complexity }}
+                    </div>
+                    <div class="col-xs-12 col-md-4 col-lg-4" style="text-align: center; margin-bottom: 10px;">
+                        <b>Количество порций:</b> {{ recipe.number_of_servings }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('.selectpicker').selectpicker({
+            noneSelectedText: 'Выберите ингридиенты'
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/recipes/search_for_recipes.js') }}"></script>
+{% endblock %}
