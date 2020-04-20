@@ -29,7 +29,7 @@
 <body background="{{ url_for('static', filename='images/base.jpg') }}">
 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-fixed-top navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="../">Главная</a>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -53,9 +53,17 @@
     </div>
 </nav>
 
-<div class="container" style="padding: 1.25rem 1.25rem;">
+<div class="container" style="padding: 1.25rem 1.25rem; margin-top: 60px;">
     {% block body %}{% endblock %}
 </div>
+
+{#<footer class="footer navbar-fixed-bottom flex" style="position: absolute;#}
+{#  bottom: 0;">#}
+{#    <div class="panel panel-frames">#}
+{#    </div>#}
+{#    <div class="container-fluid text-md-left">#}
+{#    </div>#}
+{#</footer>#}
 </body>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>

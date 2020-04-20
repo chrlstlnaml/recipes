@@ -1,6 +1,9 @@
 function searchRecipes() {
-    let formData = new FormData();
+    let myForms = $('#searchRecipesForm');
+    let formData = new FormData(myForms[0]);
     formData.append('ingredients', $('#ingredients').val());
+    formData.append('categories', $('#categories').val());
+    formData.append('complexity', $('#complexity').val());
 
     $.ajax({
         url: '../recipes/search_for_recipes',
@@ -10,7 +13,7 @@ function searchRecipes() {
         dataType: 'json',
         data: formData,
         success: function (response) {
-            alert(response);
+            $('#recipesList').html(response);
         }
     });
 }

@@ -33,25 +33,59 @@ class Recipes_:
         elif param == 'delete_photo' and request.method == 'DELETE':
             return self.delete_photo(request.values.to_dict())
 
+    @staticmethod
+    def get_recipes_list(where=None):
+        """
+        Получение списка рецептов
+        :param where: Необзятальный параметр, условие для выборки
+        :return: список рецептов
+        """
+        """ select_string = строка запроса.  """
+        where_ = f".where({' & '.join(where)})" if where else None
+        return eval(f"Recipes.select(Recipes.id, Recipes.name, Recipes.cooking_time, Recipes.number_of_servings,"
+                    f"Directory.ru_name.alias('complexity'), Files.id.alias('file_name'),"
+                    f"Files.type_file, Recipes.users_id.alias('user')"
+                    f").join(Rating, JOIN.LEFT_OUTER)"
+                    f".join(Files, JOIN.LEFT_OUTER, on=(Files.recipes_id == Recipes.id))"
+                    f".join(Directory, on=(Recipes.complexity_id == Directory.id))"
+                    f".join(IngredientsInRecipes, on=(Recipes.id == IngredientsInRecipes.recipes_id))"
+                    f".join(RecipeCategories, on=(Recipes.id == RecipeCategories.recipes_id))"
+                    f"{where_ if where else ''}"
+                    f".distinct()"
+                    f".dicts()")
+
     def show_search_page(self):
         data = {
             'ingredients': Ingredients.select(),
-            'recipes': Recipes.select(Recipes.id, Recipes.name, Recipes.cooking_time, Recipes.number_of_servings,
-                                      Directory.ru_name.alias('complexity'), Files.id.alias('file_name'),
-                                      Files.type_file, Recipes.users_id.alias('user')
-                                      ).join(Rating, JOIN.LEFT_OUTER)
-                                       .join(Files, JOIN.LEFT_OUTER, on=(Files.recipes_id == Recipes.id))
-                                       .join(Directory, on=(Recipes.complexity_id == Directory.id))
-                                       .dicts()
+            'complexity': Tools.get_complexity(),
+            'category': Tools.get_category(),
+            'recipes': self.get_recipes_list()
         }
         return render_template_my('recipes/search_for_recipes.html', data=data)
 
-    def search_for_recipes(self, post_data):
+    @staticmethod
+    def get_where_for_search(post_data):
         ingredients = post_data['ingredients'].split(',')
+        categories = post_data['categories'].split(',')
+        complexity = post_data['complexity'].split(',')
+        where = []
         if ingredients != ['']:
+            where.append(f'(IngredientsInRecipes.ingredients_id.in_({ingredients}))')
+        if categories != ['']:
+            where.append(f'(RecipeCategories.category_id.in_({categories}))')
+        if complexity != ['']:
+            where.append(f'(Directory.id.in_({complexity}))')
+        if post_data.get('from_time'):
+            where.append(f'(Recipes.cooking_time >= "{post_data.get("from_time")}")')
+        if post_data.get('to_time'):
+            where.append(f'(Recipes.cooking_time <= "{post_data.get("to_time")}")')
+        return where
 
-            print(ingredients)
-        return {'result_code': 200}
+    def search_for_recipes(self, post_data):
+        data = {
+            'recipes': self.get_recipes_list(self.get_where_for_search(post_data))
+        }
+        return render_template('recipes/recipes_list_for_search.html', data=data)
 
     @Tools.check_session
     def my_recipes_list(self):

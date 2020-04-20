@@ -37,7 +37,7 @@
                 {% endif %}
             </div>
             <div class="col-xs-12 col-md-4 col-lg-4" style="text-align: center; margin-bottom: 10px;">
-                <b>Время готовки:</b> {{ recipe.cooking_time }}
+                <b>Время готовки:</b> {{ recipe.cooking_time.strftime('%H:%M') }}
             </div>
             <div class="col-xs-12 col-md-4 col-lg-4" style="text-align: center; margin-bottom: 10px;">
                 <b>Сложность:</b> {{ recipe.complexity }}
