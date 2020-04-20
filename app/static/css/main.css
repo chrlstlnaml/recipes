@@ -12,3 +12,7 @@
     width: 50%;
     margin: auto;
 }
+
+.img-max-width{
+    max-width: 100%;
+}

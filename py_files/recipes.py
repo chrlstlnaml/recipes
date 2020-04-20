@@ -195,9 +195,17 @@ class Recipes_:
     def show_recipe(self, recipes_id):
         data = {
             'recipe': Recipes.select(Recipes, Files.id.alias('file_name'), Files.type_file,
-                                     Recipes.users_id.alias('user'))\
-                             .join(Files, JOIN.LEFT_OUTER, on=(Files.recipes_id == Recipes.id))\
-                             .where(Recipes.id == recipes_id).dicts()
+                                     Directory.ru_name.alias('complexity_'), Recipes.users_id.alias('user'))
+                             .join(Directory, JOIN.LEFT_OUTER, on=(Recipes.complexity_id == Directory.id))
+                             .join(Files, JOIN.LEFT_OUTER, on=(Files.recipes_id == Recipes.id))
+                             .where(Recipes.id == recipes_id).dicts(),
+            'ingredients': IngredientsInRecipes.select(IngredientsInRecipes, Directory.ru_name.alias('measure_'),
+                                                       Ingredients.name.alias('ingredient'))
+                                               .join(Ingredients, JOIN.LEFT_OUTER,
+                                                     on=(IngredientsInRecipes.ingredients_id == Ingredients.id))
+                                               .join(Directory, JOIN.LEFT_OUTER,
+                                                     on=(IngredientsInRecipes.measure_id == Directory.id))
+                                               .where(IngredientsInRecipes.recipes_id == recipes_id).dicts()
         }
         return render_template_my('recipes/show_recipe.html', data=data)
 

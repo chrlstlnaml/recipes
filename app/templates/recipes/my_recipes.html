@@ -29,9 +29,11 @@
             </div>
             <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
                 {% if not recipe.file_name %}
-                    <img src="{{ url_for('static', filename='images/eda.jpg') }}" alt="фото" width="150" height="150">
+                    <img src="{{ url_for('static', filename='images/eda.jpg') }}" alt="фото" width="150" height="150"
+                         class="img-max-width">
                 {% else %}
-                    <img src="{{ url_for('static', filename='images/recipe_img/{}/{}.{}'.format(recipe.user, recipe.file_name, recipe.type_file) ) }}" alt="фото" width="150" height="150">
+                    <img src="{{ url_for('static', filename='images/recipe_img/{}/{}.{}'.format(recipe.user, recipe.file_name, recipe.type_file) ) }}"
+                         alt="фото"  height="150" class="img-max-width">
                 {% endif %}
             </div>
             <div class="col-xs-12 col-md-4 col-lg-4" style="text-align: center; margin-bottom: 10px;">

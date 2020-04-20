@@ -5,25 +5,39 @@
         <div class="panel-margin">
             <div class="row">
                 <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                    <h1>{{ data.recipe[0].name }}</h1>
+                </div>
+                <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
                     {% if not data.recipe[0].file_name %}
                         <img src="{{ url_for('static', filename='images/eda.jpg') }}" alt="фото" width="300"
-                             height="300">
+                             height="300" class="img-max-width">
                     {% else %}
                         <img src="{{ url_for('static', filename='images/recipe_img/{}/{}.{}'.format(data.recipe[0].user, data.recipe[0].file_name, data.recipe[0].type_file) ) }}"
-                             alt="фото" width="300" height="300">
+                             alt="фото" height="300" class="img-max-width">
                     {% endif %}
                 </div>
                 <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
-                    <b>Время готовки:</b> {{ data.recipe[0].cooking_time }}
+                    <b>Время готовки:</b> {{ data.recipe[0].cooking_time.strftime('%H:%M') }}
                 </div>
                 <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
-                    <b>Сложность:</b> {{ data.recipe[0].complexity }}
+                    <b>Сложность:</b> {{ data.recipe[0].complexity_ }}
                 </div>
                 <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                     <b>Количество порций:</b> {{ data.recipe[0].number_of_servings }}
                 </div>
+                <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                    <b>Ингредиенты:</b>
+                    <div>
+                        <ul>
+                            {% for ingredient in data.ingredients %}
+                                <li>{{ ingredient.ingredient }} {{ ingredient.number if ingredient.number != ingredient.number|int else ingredient.number|int }} {{ ingredient.measure_ }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
                 <div class="col-xs-12 col-md-12 col-lg-12" style=" margin-bottom: 10px;">
-                    <h4>Описание:</h4>
+                    <h4><b>Описание:</b></h4>
                 </div>
                 <div class="col-xs-12 col-md-12 col-lg-12" style=" margin-bottom: 10px;">
                     {{ data.recipe[0].description|safe }}
