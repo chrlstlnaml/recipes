@@ -40,7 +40,6 @@ class Recipes_:
         :param where: Необзятальный параметр, условие для выборки
         :return: список рецептов
         """
-        """ select_string = строка запроса.  """
         where_ = f".where({' & '.join(where)})" if where else None
         return eval(f"Recipes.select(Recipes.id, Recipes.name, Recipes.cooking_time, Recipes.number_of_servings,"
                     f"Directory.ru_name.alias('complexity'), Files.id.alias('file_name'),"

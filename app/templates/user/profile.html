@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block body %}
+    <div class="panel panel-frames">
+        <div class="panel-margin">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-lg-12" style="text-align: center; margin-bottom: 10px;">
+                    <h2>Профиль</h2>
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom: 10px;">
+                <div class="col-xs-12 col-md-4 col-lg-4" style="text-align: center;">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                            {% if not data.photo %}
+                                <img src="{{ url_for('static', filename='images/user.png') }}" alt="фото" height="200"
+                                     class="img-max-width">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/user_img/{}.{}'.format(data.photo[0].id, data.photo[0].type_file) ) }}"
+                                     alt="фото" height="150" class="img-max-width">
+                            {% endif %}
+                        </div>
+                        <div class="col-xs-12 col-md-12 col-lg-12">
+                            <div class="row">
+                                <div class="col-xs-12 {% if data.photo %}col-md-6 col-lg-6{% else %}col-md-12 col-lg-12{% endif %}">
+                                <form id="updatePhotoForm">
+                                    <input type="file" id="photo" name="photo" style="width: 100%;"
+                                       accept="{% for type in data.accept %}.{{ type }}, {% endfor %}"
+                                    onChange="updatePhoto(this)">
+                                </form>
+                                </div>
+                                {% if data.photo %}
+                                    <div class="col-xs-12 col-md-6 col-lg-6">
+                                        <button type="button" class="btn btn-danger" onClick="deletePhoto()">Удалить</button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="col-xs-12 col-md-8 col-lg-8">
+                    <div class="row">
+                    <div class="alert alert-danger col-md-12 col-sm-12 col-xs-12" role="alert" style="display: none;"
+                         id="profileMessage">
+                    </div>
+                        <div class="col-xs-12 col-md-6 col-lg-6 row">
+                            <label for="name" class="col-xs-12 col-md-12 col-lg-12">
+                                Логин <span class="required">*</span>
+                            </label>
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+                                <input type="text" class="form-control" id="name" name="name" required
+                                       minlength="3" {% if data.user %}value="{{ data.user[0].login }}"{% endif %}>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 col-lg-6 row">
+                            <label for="name" class="col-xs-12 col-md-12 col-lg-12">
+                                Почта <span class="required">*</span>
+                            </label>
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+                                <input type="text" class="form-control" id="name" name="name" required
+                                       minlength="3" {% if data.user %}value="{{ data.user[0].email }}"{% endif %}>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12 col-lg-12 row" >
+                            <div class="col-xs-12 col-md-12 col-lg-12">
+{#                                <button class="btn btn-success" type="button" id="saveRecipeBtn" onClick="saveRecipe()">#}
+{#                                    Сохранить#}
+{#                                </button>#}
+{#                                <button class="btn btn-info" data-target="#mNewIngredient" data-toggle="modal"#}
+{#                                        type="button">#}
+{#                                    Изменить пароль#}
+{#                                </button>#}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="mDeletePhoto" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Вы уверены, что хотите удалить фото?</h4>
+                    <button type="button" class="close delete-photo-btn" data-dismiss="modal"
+                            aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>
+                        <b>ПРЕДУПРЕЖДЕНИЕ:</b> страница будет перезагружена!
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onClick="deletePhoto()"
+                            class="btn btn-sm btn-success delete-photo-btn">Удалить
+                    </button>
+                    <button type="button" data-dismiss="modal"
+                            class="btn btn-sm btn-danger delete-photo-btn">Отмена
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="mNewIngredient" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Новый ингредиент</h4>
+                    <button type="button" class="close new-ingredient-btn" data-dismiss="modal"
+                            aria-label="Close"><span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="alert alert-danger col-md-12 col-sm-12 col-xs-12" role="alert"
+                             style="display: none;"
+                             id="newIngredientMessage">
+                        </div>
+
+                        <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                            <form class="form-horizontal form-label-left" id="newIngredientForm">
+                                <label for="ingredient_name">Наименование <span class="required">*</span></label>
+                                <input id="ingredient_name" class="form-control" name="ingredient_name"
+                                       required type="text">
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onClick="saveNewIngredient()"
+                            class="btn btn-sm btn-success new-ingredient-btn">Сохранить
+                    </button>
+                    <button type="button" data-dismiss="modal"
+                            class="btn btn-sm btn-danger new-ingredient-btn">Отмена
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var fileSize = {{ data.max_file_size|int }};
+    </script>
+    <script src="{{ url_for('static', filename='js/user/profile.js') }}"></script>
+{% endblock %}
