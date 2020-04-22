@@ -183,6 +183,16 @@ class Recipes_:
         ingredient.save()
         return {'result_code': 200, 'ingredient': {'name': name, 'id': ingredient.id}}
 
+    @staticmethod
+    def del_categories(recipes_id):
+        q = RecipeCategories.delete().where(RecipeCategories.recipes_id == recipes_id)
+        q.execute()
+
+    @staticmethod
+    def del_ingredients(recipes_id):
+        q = IngredientsInRecipes.delete().where(IngredientsInRecipes.recipes_id == recipes_id)
+        q.execute()
+
     @Tools.try_except
     def save_recipe(self, post_data):
         categories = post_data['categories'].split(',')
@@ -190,10 +200,8 @@ class Recipes_:
         info = {'result_code': 200}
         if post_data.get('recipes_id'):
             recipes_id = post_data.get('recipes_id')
-            q = RecipeCategories.delete().where(RecipeCategories.recipes_id == recipes_id)
-            q.execute()
-            q = IngredientsInRecipes.delete().where(IngredientsInRecipes.recipes_id == recipes_id)
-            q.execute()
+            self.del_categories(recipes_id)
+            self.del_ingredients(recipes_id)
             q = (Recipes.update({Recipes.name: post_data.get('name'),
                                  Recipes.cooking_time: post_data.get('cooking_time'),
                                  Recipes.description: post_data.get('description'),

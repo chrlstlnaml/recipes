@@ -46,3 +46,28 @@ function deletePhoto() {
         }
     });
 }
+
+function saveProfile() {
+    if ($('#profileForm').valid()) {
+        $('.btn').attr('disabled', 'disabled');
+        let myForms = $('#profileForm');
+        let formData = new FormData(myForms[0]);
+        $.ajax({
+            url: '../user/save_profile',
+            type: 'PUT',
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            data: formData,
+            success: function (response) {
+                if (response['result_code'] == 200) {
+                    setTimeout('location="../user/profile";', 1000);
+                } else {
+                    $('#profileMessage').text(response['error']);
+                    $('#profileMessage').css('display', 'block');
+                    $('.btn').removeAttr('disabled');
+                }
+            }
+        });
+    }
+}

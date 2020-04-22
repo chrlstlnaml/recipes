@@ -49,29 +49,32 @@
                     <div class="alert alert-danger col-md-12 col-sm-12 col-xs-12" role="alert" style="display: none;"
                          id="profileMessage">
                     </div>
+                    <form id="profileForm">
                         <div class="col-xs-12 col-md-6 col-lg-6 row">
-                            <label for="name" class="col-xs-12 col-md-12 col-lg-12">
+                            <label for="login" class="col-xs-12 col-md-12 col-lg-12">
                                 Логин <span class="required">*</span>
                             </label>
                             <div class="col-xs-12 col-md-12 col-lg-12">
-                                <input type="text" class="form-control" id="name" name="name" required
+                                <input type="text" class="form-control" id="login" name="login" required
                                        minlength="3" {% if data.user %}value="{{ data.user[0].login }}"{% endif %}>
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-6 col-lg-6 row">
-                            <label for="name" class="col-xs-12 col-md-12 col-lg-12">
+                            <label for="email" class="col-xs-12 col-md-12 col-lg-12">
                                 Почта <span class="required">*</span>
                             </label>
                             <div class="col-xs-12 col-md-12 col-lg-12">
-                                <input type="text" class="form-control" id="name" name="name" required
-                                       minlength="3" {% if data.user %}value="{{ data.user[0].email }}"{% endif %}>
+                                <input type="email" class="form-control" id="email" name="email" required
+                                       {% if data.user %}value="{{ data.user[0].email }}"{% endif %}>
                             </div>
                         </div>
+                    </form>
+
                         <div class="col-xs-12 col-md-12 col-lg-12 row" >
                             <div class="col-xs-12 col-md-12 col-lg-12">
-{#                                <button class="btn btn-success" type="button" id="saveRecipeBtn" onClick="saveRecipe()">#}
-{#                                    Сохранить#}
-{#                                </button>#}
+                                <button class="btn btn-success" type="button" id="saveRecipeBtn" onClick="saveProfile()">
+                                    Сохранить
+                                </button>
 {#                                <button class="btn btn-info" data-target="#mNewIngredient" data-toggle="modal"#}
 {#                                        type="button">#}
 {#                                    Изменить пароль#}
@@ -107,47 +110,6 @@
                     </button>
                     <button type="button" data-dismiss="modal"
                             class="btn btn-sm btn-danger delete-photo-btn">Отмена
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="mNewIngredient" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Новый ингредиент</h4>
-                    <button type="button" class="close new-ingredient-btn" data-dismiss="modal"
-                            aria-label="Close"><span aria-hidden="true">×</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="alert alert-danger col-md-12 col-sm-12 col-xs-12" role="alert"
-                             style="display: none;"
-                             id="newIngredientMessage">
-                        </div>
-
-                        <div class="form-group col-md-12 col-sm-12 col-xs-12">
-                            <form class="form-horizontal form-label-left" id="newIngredientForm">
-                                <label for="ingredient_name">Наименование <span class="required">*</span></label>
-                                <input id="ingredient_name" class="form-control" name="ingredient_name"
-                                       required type="text">
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" onClick="saveNewIngredient()"
-                            class="btn btn-sm btn-success new-ingredient-btn">Сохранить
-                    </button>
-                    <button type="button" data-dismiss="modal"
-                            class="btn btn-sm btn-danger new-ingredient-btn">Отмена
                     </button>
                 </div>
 

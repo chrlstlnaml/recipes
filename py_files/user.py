@@ -29,6 +29,8 @@ class User:
             return jsonify(self.update_photo(request.files['photo']))
         elif param == 'delete_photo' and request.method == 'DELETE':
             return jsonify(self.delete_photo())
+        elif param == 'save_profile' and request.method == 'PUT':
+            return jsonify(self.save_profile(request.values.to_dict()))
 
     def show_login_page(self):
         return render_template_my('user/login.html')
@@ -48,24 +50,32 @@ class User:
         return render_template_my('user/registration.html')
 
     @staticmethod
-    def is_unique_email(email):
-        user = Users().select(Users.id).where(Users.email == email)
-        return len(user) == 0
+    def is_unique_field(name_field, value, and_where=None):
+        """
+        Проверка на уникальность значения поля в таблице Users
+        :param name_field: наименование поля
+        :param value: значение, которые необходимо проверить
+        :param and_where: необязательный параметр, в котором можно задать дополнительное условие в проверке
+        :return: булево значение. True - value является уникальным, False - такое значение уже имеется.
+        """
+        return len(Users().select(Users.id)
+                   .where(eval(f'(Users.{name_field} == value) {"& " + and_where if and_where else ""}'))) == 0
 
-    @staticmethod
-    def is_unique_login(login):
-        user = Users().select(Users.id).where(Users.login == login)
-        return len(user) == 0
+    def is_unique_login_and_email(self, post_data, and_where=None):
+        if not self.is_unique_field('email', post_data.get('email'), and_where):
+            return {'result_code': 400, 'error': 'Аккаунт с такой почтой уже существует!'}
+        if not self.is_unique_field('login', post_data.get('login'), and_where):
+            return {'result_code': 400, 'error': 'Аккаунт с таким логином уже существует!'}
+        return {'result_code': 200}
 
     @staticmethod
     def gen_pass_hash(password):
         return generate_password_hash(key_salt + password)
 
     def sign_up(self, post_data):
-        if not self.is_unique_email(post_data.get('email')):
-            return {'result_code': 400, 'error': 'Аккаунт с такой почтой уже существует!'}
-        if not self.is_unique_login(post_data.get('login')):
-            return {'result_code': 400, 'error': 'Аккаунт с таким логином уже существует!'}
+        info = self.is_unique_login_and_email(post_data)
+        if info['result_code'] != 200:
+            return info
         user = Users(email=post_data.get('email'), login=post_data.get('login'),
                      password=self.gen_pass_hash(post_data.get('password')))
         user.save()
@@ -85,6 +95,17 @@ class User:
             'max_file_size': Tools.get_max_size_for_files()
         }
         return render_template_my('user/profile.html', data=data)
+
+    @Tools.try_except
+    def save_profile(self, post_data):
+        info = self.is_unique_login_and_email(post_data, and_where="(Users.id != session.get('user_id'))")
+        if info['result_code'] != 200:
+            return info
+        q = (Users.update({Users.email: post_data.get('email'),
+                           Users.login: post_data.get('login'),
+                           }).where(Users.id == session.get('user_id')))
+        q.execute()
+        return {'result_code': 200}
 
     def mkdir_if_it_need(self):
         if not os.path.exists(self.dir_resources):
