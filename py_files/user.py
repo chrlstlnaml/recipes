@@ -31,6 +31,8 @@ class User:
             return jsonify(self.delete_photo())
         elif param == 'save_profile' and request.method == 'PUT':
             return jsonify(self.save_profile(request.values.to_dict()))
+        elif param == 'change_password' and request.method == 'PUT':
+            return jsonify(self.change_password(request.values.to_dict()))
 
     def show_login_page(self):
         return render_template_my('user/login.html')
@@ -144,4 +146,14 @@ class User:
                 os.remove(self.dir_resources + '/' + file_id)
             except Exception as ex:
                 print(ex)
+        return {'result_code': 200}
+
+    @Tools.try_except
+    def change_password(self, post_data):
+        user = Users.select(Users.id, Users.password).where(Users.id == session.get('user_id'))
+        if not check_password_hash(user[0].password, key_salt + post_data.get('old_password')):
+            return {'result_code': 400, 'error': 'Старый пароль не верен.'}
+        q = (Users.update({Users.password: self.gen_pass_hash(post_data.get('password'))})
+                  .where(Files.id == Users.id == session.get('user_id')))
+        q.execute()
         return {'result_code': 200}

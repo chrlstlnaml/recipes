@@ -71,3 +71,51 @@ function saveProfile() {
         });
     }
 }
+
+
+function changePassword() {
+    $('#changePasswordForm').validate({
+        rules: {
+            password: {
+                validateFigure: $('#password').val(),
+            }
+        }
+    });
+    if ($('#changePasswordForm').valid()) {
+        $('.btn').attr('disabled', 'disabled');
+        let myForms = $('#changePasswordForm');
+        let formData = new FormData(myForms[0]);
+        $.ajax({
+            url: '../user/change_password',
+            type: 'PUT',
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            data: formData,
+            success: function (response) {
+                if (response['result_code'] == 200) {
+                    setTimeout('location="../user/profile";', 1000);
+                } else {
+                    $('#changePasswordMessage').text(response['error']);
+                    $('#changePasswordMessage').css('display', 'block');
+                    $('.btn').removeAttr('disabled');
+                }
+            }
+        });
+    }
+}
+
+function checkPassword() {
+    if ($('#password').val() == $('#password2').val()) {
+        $('#savePasswBtn').removeAttr('disabled');
+        if ($('#password').val().length >= 6) $('#password2').css('border-color', '#ccc');
+    } else {
+        $('#savePasswBtn').attr('disabled', 'true');
+        $('#password2').css('border-color', 'red');
+    }
+}
+
+$.validator.addMethod('validateFigure',
+    function (val) {
+        return !!((/[0-9]/.test(val)) && (val.match(/[A-Z]/g)));
+    }, "Пароль должен содержать минимум одну цифру и одну заглавную букву");

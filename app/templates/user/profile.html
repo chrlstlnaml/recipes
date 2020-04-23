@@ -75,10 +75,10 @@
                                 <button class="btn btn-success" type="button" id="saveRecipeBtn" onClick="saveProfile()">
                                     Сохранить
                                 </button>
-{#                                <button class="btn btn-info" data-target="#mNewIngredient" data-toggle="modal"#}
-{#                                        type="button">#}
-{#                                    Изменить пароль#}
-{#                                </button>#}
+                                <button class="btn btn-info" data-target="#mChangePassword" data-toggle="modal"
+                                        type="button">
+                                    Изменить пароль
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -88,28 +88,52 @@
     </div>
 
 
-    <div class="modal" id="mDeletePhoto" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal" id="mChangePassword" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Вы уверены, что хотите удалить фото?</h4>
-                    <button type="button" class="close delete-photo-btn" data-dismiss="modal"
+                    <button type="button" class="close change-password-btn" data-dismiss="modal"
                             aria-label="Close"><span aria-hidden="true">×</span>
                     </button>
                 </div>
 
                 <div class="modal-body">
-                    <p>
-                        <b>ПРЕДУПРЕЖДЕНИЕ:</b> страница будет перезагружена!
-                    </p>
+                    <form class="form-horizontal" id="changePasswordForm" style="margin-left: 10px;">
+                        <div class="row">
+                            <div class="alert alert-danger col-md-12 col-sm-12 col-xs-12" role="alert"
+                                 style="display: none;"
+                                 id="changePasswordMessage">
+                            </div>
+
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+
+                                <label for="old_password">Старый пароль <span class="required">*</span></label>
+                                <input id="old_password" class="form-control" name="old_password"
+                                       required type="password">
+                            </div>
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+
+                                <label for="password">Новый пароль <span class="required">*</span></label>
+                                <input id="password" class="form-control" name="password"
+                                       required type="password" minlength="6" onChange="checkPassword()">
+                            </div>
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+
+                                <label for="password2">Повторите новый пароль <span class="required">*</span></label>
+                                <input id="password2" class="form-control" name="password2" onChange="checkPassword()"
+                                       required type="password" minlength="6">
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" onClick="deletePhoto()"
-                            class="btn btn-sm btn-success delete-photo-btn">Удалить
+                    <button type="button" onClick="changePassword()" id="savePasswBtn"
+                            class="btn btn-sm btn-success change-password-btn">Изменить
                     </button>
                     <button type="button" data-dismiss="modal"
-                            class="btn btn-sm btn-danger delete-photo-btn">Отмена
+                            class="btn btn-sm btn-danger change-password-btn">Отмена
                     </button>
                 </div>
 
