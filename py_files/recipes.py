@@ -2,14 +2,17 @@ from flask import request, jsonify, session, render_template
 from db_models import Ingredients, Recipes, Rating, RecipeCategories, IngredientsInRecipes, Files, Directory
 from py_files.render_template import render_template_my
 from py_files.tools import Tools
+from py_files.paginator import MyPagination
 from peewee import JOIN
 import os
+from Config import Config
 
 
 class Recipes_:
 
     def __init__(self):
-        self.dir_resources = 'app/static/images/recipe_img'
+        self.dir_resources = Config().get_param('FILES')["dir_resources"]
+        self.number_paginate = int(Config().get_param('PAGINATOR')["number_paginate"])
 
     def view(self, param):
         if not param:
@@ -60,7 +63,10 @@ class Recipes_:
             'category': Tools.get_category(),
             'recipes': self.get_recipes_list()
         }
-        return render_template_my('recipes/search_for_recipes.html', data=data)
+        pagination = MyPagination(page=1, total=len(data["recipes"]), per_page=self.number_paginate, search=False,
+                                  record_name='рецепты', css_framework='bootstrap4')
+        data["recipes"] = data["recipes"][:self.number_paginate]
+        return render_template_my('recipes/search_for_recipes.html', data=data, pagination=pagination)
 
     @staticmethod
     def get_where_for_search(post_data):
@@ -84,7 +90,11 @@ class Recipes_:
         data = {
             'recipes': self.get_recipes_list(self.get_where_for_search(post_data))
         }
-        return render_template('recipes/recipes_list_for_search.html', data=data)
+        start_page = int(post_data.get('page', 1))
+        pagination = MyPagination(page=start_page, total=len(data["recipes"]), per_page=self.number_paginate,
+                                  search=False, record_name='рецепты', css_framework='bootstrap4')
+        data["recipes"] = data["recipes"][(start_page - 1) * self.number_paginate:start_page * self.number_paginate]
+        return render_template('recipes/recipes_list_for_search.html', data=data, pagination=pagination)
 
     @Tools.check_session
     def my_recipes_list(self):
